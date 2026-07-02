@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soil Strength Parameters from SPT &amp; CPT — Geotechnical Calculators</title>
+<meta name="description" content="Free browser tools that estimate soil strength parameters — cohesion (c), friction angle (φ), unit weight (γ), elastic modulus (E) — from SPT N-value or CPT (qc, fs, u2) profiles, with CPT soil behaviour type classification.">
+<meta name="keywords" content="soil strength parameters, geotechnical design parameters, SPT calculator, CPT calculator, cohesion friction angle unit weight elastic modulus">
+<!-- Replace REPLACE-WITH-YOUR-DOMAIN with your real domain after deploy -->
+<link rel="canonical" href="https://REPLACE-WITH-YOUR-DOMAIN/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Soil Strength Parameters from SPT & CPT">
+<meta property="og:description" content="Estimate cohesion, friction angle, unit weight and elastic modulus from SPT or CPT profiles.">
+<meta property="og:url" content="https://REPLACE-WITH-YOUR-DOMAIN/">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ItemList","name":"Soil strength parameter calculators","itemListElement":[
+{"@type":"ListItem","position":1,"name":"SPT Soil Strength Parameters Calculator","url":"https://REPLACE-WITH-YOUR-DOMAIN/spt.html"},
+{"@type":"ListItem","position":2,"name":"CPT Soil Strength Parameters Calculator","url":"https://REPLACE-WITH-YOUR-DOMAIN/cpt.html"}
+]}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<nav class="nav">
+  <a class="brand" href="./index.html">Soil Strength Parameters</a>
+  <a href="./spt.html">SPT</a>
+  <a href="./cpt.html">CPT</a>
+  <span class="spacer"></span>
+</nav>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Geotechnical · c, φ, γ, E</p>
+    <h1>Soil Strength Parameters from SPT &amp; CPT</h1>
+    <p class="sub">Two free browser tools that estimate depth-wise cohesion (c), internal friction angle (φ), unit weight (γ) and elastic modulus (E) from in-situ test profiles. Choose the tool that matches your data — SPT for onshore borehole data, CPT for cone penetration data.</p>
+  </header>
+
+  <div class="methods">
+    <a class="method" href="./spt.html">
+      <span class="k">SPT · Onshore</span>
+      <h2>SPT Soil Strength Parameters →</h2>
+      <p>From an SPT N-value profile. Energy-based inversion gives friction angle (sands) or cohesion (clays); you provide the soil type per layer.</p>
+      <span class="go-link">Open SPT calculator →</span>
+    </a>
+    <a class="method" href="./cpt.html">
+      <span class="k">CPT · Offshore</span>
+      <h2>CPT Soil Strength Parameters →</h2>
+      <p>From a CPT (qc, fs, u2) profile. Cohesion and friction angle are solved together, with automatic soil behaviour type classification.</p>
+      <span class="go-link">Open CPT calculator →</span>
+    </a>
+  </div>
+
+  <article class="content">
+    <section>
+      <h2>Which tool should I use?</h2>
+      <p>Use the <a href="./spt.html">SPT calculator</a> when you have Standard Penetration Test data (depth and N-value), typical of onshore site investigations. Because an N-value alone cannot identify soil type, you supply clay or sand for each layer, usually read from the borehole log.</p>
+      <p>Use the <a href="./cpt.html">CPT calculator</a> when you have Cone Penetration Test data (cone resistance, sleeve friction and pore pressure), common offshore. The CPT measures several quantities at once, so both strength parameters are solved together and the soil behaviour type is classified automatically.</p>
+    </section>
+
+    <section>
+      <h2>The parameters</h2>
+      <p>Both tools return the four parameters most often needed for foundation and earth-structure design: cohesion (c, kPa), internal friction angle (φ, °), unit weight (γ, kN/m³) and elastic modulus (E, kPa), reported per layer and as a depth profile. The results are reference estimates that support the engineer's judgment; final responsibility rests with the engineer.</p>
+    </section>
+
+    <section>
+      <h2>Methods</h2>
+      <p>The SPT tool uses an energy-based inversion consistent with the SPT penetration resistance. The CPT tool follows the analytical bearing-capacity approach of Motaghedi and Eslami (2013), solving cohesion and friction angle simultaneously, and classifies soil behaviour type with Robertson's (2010) index. See each tool's page for details.</p>
+    </section>
+  </article>
+</div>
+
+<footer>
+  Soil Strength Parameters from SPT &amp; CPT. Results are reference estimates and must be verified against site-specific data before use in design.
+</footer>
+</body>
+</html>

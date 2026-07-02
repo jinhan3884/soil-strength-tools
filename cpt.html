@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CPT Soil Strength Parameters Calculator — c, φ, γ, E &amp; soil type</title>
+<meta name="description" content="Free browser tool to estimate soil strength parameters — cohesion (c), friction angle (φ), unit weight (γ), elastic modulus (E) — from a CPT (qc, fs, u2) profile, with Robertson soil behaviour type classification.">
+<meta name="keywords" content="CPT soil strength parameters, CPT cohesion friction angle, CPT soil behaviour type, CPTu shear strength, geotechnical design parameters">
+<!-- Replace REPLACE-WITH-YOUR-DOMAIN with your real domain after deploy -->
+<link rel="canonical" href="https://REPLACE-WITH-YOUR-DOMAIN/cpt.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="CPT Soil Strength Parameters Calculator">
+<meta property="og:description" content="Estimate cohesion, friction angle, unit weight and elastic modulus from a CPT profile, with soil behaviour type classification.">
+<meta property="og:url" content="https://REPLACE-WITH-YOUR-DOMAIN/cpt.html">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"CPT Soil Strength Parameters Calculator","applicationCategory":"EngineeringApplication","operatingSystem":"Web browser","description":"Estimates soil strength parameters (cohesion, friction angle, unit weight, elastic modulus) from a CPT (qc, fs, u2) profile, with Robertson soil behaviour type classification.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"What input does the CPT calculator use?","acceptedAnswer":{"@type":"Answer","text":"One row per measurement: depth (m), qc (MPa), fs and u2 (units auto-detected). Outputs are cohesion c (kPa), friction angle phi (degrees), unit weight gamma (kN/m3), elastic modulus E (kPa) and soil behaviour type."}},
+{"@type":"Question","name":"How does CPT classify soil type?","acceptedAnswer":{"@type":"Answer","text":"Because the CPT measures cone resistance, sleeve friction and pore pressure together, soil behaviour type can be classified automatically. This tool uses Robertson's (2010) non-normalized soil behaviour type index."}},
+{"@type":"Question","name":"How are cohesion and friction angle obtained?","acceptedAnswer":{"@type":"Answer","text":"Both are solved simultaneously from qc, fs and u2 using the analytical bearing-capacity approach of Motaghedi and Eslami (2013), which combines tip bearing-capacity failure with direct shear along the sleeve."}},
+{"@type":"Question","name":"Can I use the results directly for design?","acceptedAnswer":{"@type":"Answer","text":"The values are reference estimates that support engineering judgment. A qualified geotechnical engineer should verify them against site-specific data before use in design."}}
+]}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<nav class="nav">
+  <a class="brand" href="./index.html">Soil Strength Parameters</a>
+  <a href="./spt.html">SPT</a>
+  <a href="./cpt.html" class="active">CPT</a>
+  <span class="spacer"></span>
+</nav>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">CPT · Offshore</p>
+    <h1>CPT Soil Strength Parameters Calculator</h1>
+    <p class="sub">Estimate depth-wise cohesion (c), internal friction angle (φ), unit weight (γ) and elastic modulus (E) from a CPT (qc, fs, u2) profile, with automatic soil behaviour type classification. Results are reference values that support the engineer's judgment; final responsibility rests with the engineer.</p>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <label class="field" for="csv">Penetration profile (depth, qc, fs, u2)</label>
+      <textarea id="csv" spellcheck="false">depth,qc,fs,u2
+1.0,2.1,0.025,0.10
+2.0,3.4,0.035,0.15
+3.0,5.2,0.050,0.20
+4.0,6.8,0.061,0.22
+5.0,8.1,0.070,0.25
+6.0,10.5,0.082,0.28
+7.0,12.0,0.090,0.30
+8.0,14.3,0.101,0.33
+9.0,16.0,0.110,0.35
+10.0,18.5,0.120,0.38</textarea>
+      <p class="hint">qc in MPa. fs·u2 units (MPa/kPa) are auto-detected. Fixed 8 layers (0.1H×6 + 0.2H×2).</p>
+      <div class="row">
+        <button class="go" id="run" disabled>Analyze</button>
+        <button class="filebtn" id="pick">Load CSV</button>
+        <input id="file" type="file" accept=".csv,text/csv" hidden>
+      </div>
+      <div id="status" class="status warn">Loading engine…</div>
+    </section>
+
+    <section class="card results" id="results">
+      <h2>Depth Profile</h2>
+      <div class="legend hidden" id="legend"></div>
+      <div class="scroll"><div id="chart"></div></div>
+      <h2 style="margin-top:22px">Layer Summary</h2>
+      <div class="scroll"><table id="table"></table></div>
+    </section>
+  </div>
+
+  <article class="content">
+    <section>
+      <h2>Estimate soil strength parameters from CPT</h2>
+      <p>This free tool estimates the soil strength parameters most often needed for offshore and onshore design — cohesion (c), internal friction angle (φ), unit weight (γ) and elastic modulus (E) — from a Cone Penetration Test (CPT/CPTu) profile. Paste a depth / qc / fs / u2 profile and the calculator returns depth-wise parameters, a layered design summary, a depth profile chart, and a soil behaviour type classification for each layer.</p>
+      <p>Because the CPT records several quantities at once, both strength parameters can be resolved together and the soil can be classified without a separate borehole log.</p>
+    </section>
+
+    <section>
+      <h2>The four parameters</h2>
+      <dl>
+        <dt>Cohesion — c (kPa)</dt>
+        <dd>The shear-strength component independent of confining stress; important in clays and mixed soils.</dd>
+        <dt>Internal friction angle — φ (°)</dt>
+        <dd>The stress-dependent shear-strength component; the primary strength parameter for sands.</dd>
+        <dt>Unit weight — γ (kN/m³)</dt>
+        <dd>The soil's weight per unit volume, used for overburden and self-weight calculations.</dd>
+        <dt>Elastic modulus — E (kPa)</dt>
+        <dd>A measure of soil stiffness, used to estimate settlement and deformation.</dd>
+      </dl>
+    </section>
+
+    <section>
+      <h2>How the parameters are derived</h2>
+      <h3>Cohesion and friction angle</h3>
+      <p>Cohesion and friction angle are solved <em>simultaneously</em> from cone resistance (qc), sleeve friction (fs) and pore pressure (u2) using the analytical approach of Motaghedi and Eslami (2013). Two coupled equations are formed — one for bearing-capacity failure at the cone tip and one for direct shear along the sleeve — and solved for c and φ together. Using all three CPT outputs, rather than cone resistance alone, reduces the influence of erroneous readings and yields both parameters even in mixed soils.</p>
+      <h3>Soil behaviour type</h3>
+      <p>Each layer is classified using Robertson's (2010) non-normalized soil behaviour type index, computed from qc and the friction ratio. This gives a soil description — from clay through silt mixtures to sand — alongside the strength parameters.</p>
+    </section>
+
+    <section>
+      <h2>How to use the calculator</h2>
+      <p>Enter one row per measurement as comma-separated values; a header row is skipped automatically. Columns are depth (m), qc (MPa), fs and u2 — the units of fs and u2 (MPa or kPa) are detected automatically. Click Analyze to see the layer summary and depth profile. The layering follows a fixed eight-layer scheme, and you can load a CSV exported from a spreadsheet.</p>
+    </section>
+
+    <section>
+      <h2>Methods, assumptions and limitations</h2>
+      <p>The parameters are engineering estimates intended to support — not replace — the judgment of a qualified geotechnical engineer, who remains responsible for the values adopted in design. Soil behaviour type uses the non-normalized index, which needs only basic cone measurements; a normalized index can be more reliable at greater depths. The behaviour-type index does not resolve certain special cases (sensitive fine-grained soils, or heavily overconsolidated / cemented soils), which require separate assessment.</p>
+    </section>
+
+    <section>
+      <h2>Frequently asked questions</h2>
+      <div class="faq">
+        <details><summary>What input does the CPT calculator use?</summary>
+          <p>One row per measurement: depth (m), qc (MPa), fs and u2 (units auto-detected). Outputs are cohesion c (kPa), friction angle φ (°), unit weight γ (kN/m³), elastic modulus E (kPa) and soil behaviour type.</p></details>
+        <details><summary>How does CPT classify soil type?</summary>
+          <p>Because the CPT measures cone resistance, sleeve friction and pore pressure together, soil behaviour type can be classified automatically. This tool uses Robertson's (2010) non-normalized soil behaviour type index.</p></details>
+        <details><summary>How are cohesion and friction angle obtained?</summary>
+          <p>Both are solved simultaneously from qc, fs and u2 using the analytical bearing-capacity approach of Motaghedi and Eslami (2013), which combines tip bearing-capacity failure with direct shear along the sleeve.</p></details>
+        <details><summary>Can I use the results directly for design?</summary>
+          <p>The values are reference estimates that support engineering judgment. A qualified geotechnical engineer should verify them against site-specific data before use in design.</p></details>
+      </div>
+    </section>
+
+    <section>
+      <h2>References</h2>
+      <ul>
+        <li>Motaghedi, H. &amp; Eslami, A. (2013). <em>Determining soil shear strength parameters from CPT and CPTu data.</em> Scientia Iranica, Transactions A: Civil Engineering, 20(5), 1349–1360.</li>
+        <li>Motaghedi, H., Eslami, A. &amp; Shakeran, M. (2013). <em>Analytical approach for determining soil shear strength parameters from CPT and CPTu data.</em> Proc. 18th ICSMGE, Paris.</li>
+        <li>Eslami, A. &amp; Fellenius, B.H. (2004). <em>CPT and CPTu data for soil profile interpretation.</em> Iranian Journal of Science &amp; Technology, 28(B1), 69–86.</li>
+        <li>Robertson, P.K. (2010). <em>Soil behaviour type from the CPT: an update.</em> 2nd International Symposium on Cone Penetration Testing (CPT'10).</li>
+      </ul>
+    </section>
+  </article>
+</div>
+
+<footer>
+  CPT Soil Strength Parameters Calculator. Results are reference estimates and must be verified against site-specific data before use in design.
+</footer>
+
+<script type="module">
+  import { initTool } from './app.js';
+  initTool({ engine: './cpt_core.js', soilColumn: false, sbtColumn: true });
+</script>
+</body>
+</html>

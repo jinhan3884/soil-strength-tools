@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPT Soil Strength Parameters Calculator — c, φ, γ, E from N-value</title>
+<meta name="description" content="Free browser tool to estimate soil strength parameters — cohesion (c), friction angle (φ), unit weight (γ), elastic modulus (E) — from an SPT N-value profile, using an energy-based inversion.">
+<meta name="keywords" content="SPT soil strength parameters, SPT friction angle, cohesion from SPT, SPT N value calculator, geotechnical design parameters">
+<!-- Replace REPLACE-WITH-YOUR-DOMAIN with your real domain after deploy -->
+<link rel="canonical" href="https://REPLACE-WITH-YOUR-DOMAIN/spt.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SPT Soil Strength Parameters Calculator">
+<meta property="og:description" content="Estimate cohesion, friction angle, unit weight and elastic modulus from an SPT N-value profile.">
+<meta property="og:url" content="https://REPLACE-WITH-YOUR-DOMAIN/spt.html">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"SPT Soil Strength Parameters Calculator","applicationCategory":"EngineeringApplication","operatingSystem":"Web browser","description":"Estimates soil strength parameters (cohesion, friction angle, unit weight, elastic modulus) from an SPT N-value profile using an energy-based inversion.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Can SPT determine soil type automatically?","acceptedAnswer":{"@type":"Answer","text":"No. An SPT N-value alone cannot distinguish dense sand from stiff clay, so you supply the soil type (clay or sand) for each layer, usually read from the borehole log."}},
+{"@type":"Question","name":"What input does the SPT calculator use?","acceptedAnswer":{"@type":"Answer","text":"One row per measurement: depth (m), N-value, type (1 = clay, 0 = sand). Outputs are cohesion c (kPa), friction angle phi (degrees), unit weight gamma (kN/m3) and elastic modulus E (kPa)."}},
+{"@type":"Question","name":"How are the strength parameters obtained?","acceptedAnswer":{"@type":"Answer","text":"They are back-calculated from an energy-based inversion consistent with the SPT penetration resistance: friction angle for sands (fully drained) and cohesion for clays (undrained)."}},
+{"@type":"Question","name":"Can I use the results directly for design?","acceptedAnswer":{"@type":"Answer","text":"The values are reference estimates that support engineering judgment. A qualified geotechnical engineer should verify them against site-specific data before use in design."}}
+]}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<nav class="nav">
+  <a class="brand" href="./index.html">Soil Strength Parameters</a>
+  <a href="./spt.html" class="active">SPT</a>
+  <a href="./cpt.html">CPT</a>
+  <span class="spacer"></span>
+</nav>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">SPT · Onshore</p>
+    <h1>SPT Soil Strength Parameters Calculator</h1>
+    <p class="sub">Estimate depth-wise cohesion (c), internal friction angle (φ), unit weight (γ) and elastic modulus (E) from an SPT N-value profile, using an energy-based inversion. Results are reference values that support the engineer's judgment; final responsibility rests with the engineer.</p>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <label class="field" for="csv">Borehole profile (depth, SPT, type)</label>
+      <textarea id="csv" spellcheck="false">depth,SPT,type
+1.0,4,1
+2.0,6,1
+3.0,9,1
+4.0,15,0
+6.0,22,0
+8.0,31,0
+10.0,44,0</textarea>
+      <p class="hint"><code>type</code> — 1 = Clay, 0 = Sand. A header row is skipped automatically.</p>
+      <div class="row">
+        <div class="num">
+          <label class="field" for="layers" style="margin:0">Layers</label>
+          <input id="layers" type="number" min="1" max="30" value="8">
+        </div>
+        <button class="go" id="run" disabled>Analyze</button>
+        <button class="filebtn" id="pick">Load CSV</button>
+        <input id="file" type="file" accept=".csv,text/csv" hidden>
+      </div>
+      <div id="status" class="status warn">Loading engine…</div>
+    </section>
+
+    <section class="card results" id="results">
+      <h2>Depth Profile</h2>
+      <div class="legend hidden" id="legend"></div>
+      <div class="scroll"><div id="chart"></div></div>
+      <h2 style="margin-top:22px">Layer Summary</h2>
+      <div class="scroll"><table id="table"></table></div>
+    </section>
+  </div>
+
+  <article class="content">
+    <section>
+      <h2>Estimate soil strength parameters from SPT</h2>
+      <p>This free tool estimates the soil strength parameters most often needed for onshore foundation and earth-structure design — cohesion (c), internal friction angle (φ), unit weight (γ) and elastic modulus (E) — directly from a Standard Penetration Test (SPT) N-value profile. Paste a depth / N-value / soil-type profile and the calculator returns depth-wise parameters, a layered design summary, and a depth profile chart.</p>
+      <p>The strength parameter is back-calculated with an energy-based inversion consistent with the driving resistance recorded by the N-value, rather than a single empirical correlation.</p>
+    </section>
+
+    <section>
+      <h2>The four parameters</h2>
+      <dl>
+        <dt>Cohesion — c (kPa)</dt>
+        <dd>The shear-strength component independent of confining stress; governs the undrained behaviour of clays.</dd>
+        <dt>Internal friction angle — φ (°)</dt>
+        <dd>The stress-dependent shear-strength component; the primary strength parameter for sands.</dd>
+        <dt>Unit weight — γ (kN/m³)</dt>
+        <dd>The soil's weight per unit volume, used for overburden and self-weight calculations.</dd>
+        <dt>Elastic modulus — E (kPa)</dt>
+        <dd>A measure of soil stiffness, used to estimate settlement and deformation.</dd>
+      </dl>
+    </section>
+
+    <section>
+      <h2>How the parameters are derived</h2>
+      <p>The tool applies an energy-based inversion: the work delivered by the SPT hammer is balanced against the penetration resistance mobilised by the sampler, so the strength parameter consistent with the measured N-value can be recovered. Sands are treated as fully drained, giving the internal friction angle (φ); clays are treated as undrained, giving cohesion (c). Unit weight and elastic modulus are estimated from the N-value.</p>
+      <p>Because an N-value on its own cannot identify soil type — a given N can correspond to either dense sand or stiff clay — you supply clay (1) or sand (0) for each point, typically read from the borehole log. This keeps soil classification an explicit input rather than an assumption hidden inside the calculation.</p>
+    </section>
+
+    <section>
+      <h2>How to use the calculator</h2>
+      <p>Enter one row per measurement as comma-separated values; a header row is skipped automatically. Columns are depth (m), N-value, and type (1 = clay, 0 = sand). Set the number of design layers, then click Analyze to see the layer summary and depth profile. You can also load a CSV file exported from a spreadsheet.</p>
+    </section>
+
+    <section>
+      <h2>Methods, assumptions and limitations</h2>
+      <p>The parameters are engineering estimates intended to support — not replace — the judgment of a qualified geotechnical engineer, who remains responsible for the values adopted in design. Soil type must be supplied by the user; the accuracy of the clay/sand assignment directly affects the result. The drained/undrained idealisation (sand fully drained, clay undrained) is a simplification appropriate for preliminary estimates.</p>
+    </section>
+
+    <section>
+      <h2>Frequently asked questions</h2>
+      <div class="faq">
+        <details><summary>Can SPT determine soil type automatically?</summary>
+          <p>No. An SPT N-value alone cannot distinguish dense sand from stiff clay, so you supply the soil type (clay or sand) for each layer, usually read from the borehole log.</p></details>
+        <details><summary>What input does the SPT calculator use?</summary>
+          <p>One row per measurement: depth (m), N-value, type (1 = clay, 0 = sand). Outputs are cohesion c (kPa), friction angle φ (°), unit weight γ (kN/m³) and elastic modulus E (kPa).</p></details>
+        <details><summary>How are the strength parameters obtained?</summary>
+          <p>They are back-calculated from an energy-based inversion consistent with the SPT penetration resistance: friction angle for sands (fully drained) and cohesion for clays (undrained).</p></details>
+        <details><summary>Can I use the results directly for design?</summary>
+          <p>The values are reference estimates that support engineering judgment. A qualified geotechnical engineer should verify them against site-specific data before use in design.</p></details>
+      </div>
+    </section>
+
+    <section>
+      <h2>Method &amp; status</h2>
+      <p>The SPT strength parameters are produced by an energy-based inversion developed in-house; a formal publication of the method is in preparation. For CPT-based estimation, which follows a published analytical approach, see the <a href="./cpt.html">CPT calculator</a>.</p>
+    </section>
+  </article>
+</div>
+
+<footer>
+  SPT Soil Strength Parameters Calculator. Results are reference estimates and must be verified against site-specific data before use in design.
+</footer>
+
+<script type="module">
+  import { initTool } from './app.js';
+  initTool({ engine: './spt_core.js', soilColumn: true, sbtColumn: false });
+</script>
+</body>
+</html>
