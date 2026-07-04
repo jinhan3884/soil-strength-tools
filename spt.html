@@ -45,24 +45,20 @@
 
   <div class="grid">
     <section class="card">
-      <label class="field" for="csv">Borehole profile (depth, SPT, type)</label>
-      <textarea id="csv" spellcheck="false">depth,SPT,type
-1.0,4,1
-2.0,6,1
-3.0,9,1
-4.0,15,0
-6.0,22,0
-8.0,31,0
-10.0,44,0</textarea>
-      <p class="hint"><code>type</code> — 1 = Clay, 0 = Sand. A header row is skipped automatically.</p>
+      <label class="field">Borehole profile</label>
+      <div class="tablewrap"><table class="input-table" id="inputTable"></table></div>
+      <div class="table-controls">
+        <button class="addbtn" id="addrow" type="button">+ Add row</button>
+        <button class="filebtn" id="pick" type="button">Load CSV</button>
+        <input id="file" type="file" accept=".csv,text/csv" hidden>
+      </div>
+      <p class="hint">Soil is Clay or Sand per row. Tip: copy a block from a spreadsheet and paste into a cell to fill many rows at once.</p>
       <div class="row">
         <div class="num">
           <label class="field" for="layers" style="margin:0">Layers</label>
           <input id="layers" type="number" min="1" max="30" value="8">
         </div>
         <button class="go" id="run" disabled>Analyze</button>
-        <button class="filebtn" id="pick">Load CSV</button>
-        <input id="file" type="file" accept=".csv,text/csv" hidden>
       </div>
       <div id="status" class="status warn">Loading engine…</div>
     </section>
@@ -140,7 +136,24 @@
 
 <script type="module">
   import { initTool } from './app.js';
-  initTool({ engine: './spt_core.js', soilColumn: true, sbtColumn: false });
+  initTool({
+    engine: './spt_core.js',
+    soilColumn: true, sbtColumn: false,
+    columns: [
+      { key: 'depth', label: 'Depth (m)', type: 'number' },
+      { key: 'spt',   label: 'N',         type: 'number' },
+      { key: 'type',  label: 'Soil',      type: 'select', options: [{ v: '1', t: 'Clay' }, { v: '0', t: 'Sand' }] },
+    ],
+    rows: [
+      { depth: '1.0', spt: '4',  type: '1' },
+      { depth: '2.0', spt: '6',  type: '1' },
+      { depth: '3.0', spt: '9',  type: '1' },
+      { depth: '4.0', spt: '15', type: '0' },
+      { depth: '6.0', spt: '22', type: '0' },
+      { depth: '8.0', spt: '31', type: '0' },
+      { depth: '10.0', spt: '44', type: '0' },
+    ],
+  });
 </script>
 </body>
 </html>

@@ -45,23 +45,16 @@
 
   <div class="grid">
     <section class="card">
-      <label class="field" for="csv">Penetration profile (depth, qc, fs, u2)</label>
-      <textarea id="csv" spellcheck="false">depth,qc,fs,u2
-1.0,2.1,0.025,0.10
-2.0,3.4,0.035,0.15
-3.0,5.2,0.050,0.20
-4.0,6.8,0.061,0.22
-5.0,8.1,0.070,0.25
-6.0,10.5,0.082,0.28
-7.0,12.0,0.090,0.30
-8.0,14.3,0.101,0.33
-9.0,16.0,0.110,0.35
-10.0,18.5,0.120,0.38</textarea>
-      <p class="hint">qc in MPa. fs·u2 units (MPa/kPa) are auto-detected. Fixed 8 layers (0.1H×6 + 0.2H×2).</p>
+      <label class="field">Penetration profile</label>
+      <div class="tablewrap"><table class="input-table" id="inputTable"></table></div>
+      <div class="table-controls">
+        <button class="addbtn" id="addrow" type="button">+ Add row</button>
+        <button class="filebtn" id="pick" type="button">Load CSV</button>
+        <input id="file" type="file" accept=".csv,text/csv" hidden>
+      </div>
+      <p class="hint">qc in MPa. fs·u2 units (MPa/kPa) are auto-detected. Fixed 8 layers (0.1H×6 + 0.2H×2). Tip: copy a block from a spreadsheet and paste into a cell to fill many rows at once.</p>
       <div class="row">
         <button class="go" id="run" disabled>Analyze</button>
-        <button class="filebtn" id="pick">Load CSV</button>
-        <input id="file" type="file" accept=".csv,text/csv" hidden>
       </div>
       <div id="status" class="status warn">Loading engine…</div>
     </section>
@@ -146,7 +139,28 @@
 
 <script type="module">
   import { initTool } from './app.js';
-  initTool({ engine: './cpt_core.js', soilColumn: false, sbtColumn: true });
+  initTool({
+    engine: './cpt_core.js',
+    soilColumn: false, sbtColumn: true,
+    columns: [
+      { key: 'depth', label: 'Depth (m)', type: 'number' },
+      { key: 'qc',    label: 'qc (MPa)',  type: 'number' },
+      { key: 'fs',    label: 'fs',        type: 'number' },
+      { key: 'u2',    label: 'u2',        type: 'number' },
+    ],
+    rows: [
+      { depth: '1.0',  qc: '2.1',  fs: '0.025', u2: '0.10' },
+      { depth: '2.0',  qc: '3.4',  fs: '0.035', u2: '0.15' },
+      { depth: '3.0',  qc: '5.2',  fs: '0.050', u2: '0.20' },
+      { depth: '4.0',  qc: '6.8',  fs: '0.061', u2: '0.22' },
+      { depth: '5.0',  qc: '8.1',  fs: '0.070', u2: '0.25' },
+      { depth: '6.0',  qc: '10.5', fs: '0.082', u2: '0.28' },
+      { depth: '7.0',  qc: '12.0', fs: '0.090', u2: '0.30' },
+      { depth: '8.0',  qc: '14.3', fs: '0.101', u2: '0.33' },
+      { depth: '9.0',  qc: '16.0', fs: '0.110', u2: '0.35' },
+      { depth: '10.0', qc: '18.5', fs: '0.120', u2: '0.38' },
+    ],
+  });
 </script>
 </body>
 </html>

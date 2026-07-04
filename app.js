@@ -1,5 +1,5 @@
 // Shared tool engine for spt.html and cpt.html.
-// Each page calls initTool({ engine, soilColumn, sbtColumn }).
+// Each page calls initTool({ engine, soilColumn, sbtColumn, columns, rows }).
 
 const $ = s => document.querySelector(s);
 const fmt = (v, d = 1) => v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
@@ -24,6 +24,10 @@ export async function initTool(cfg) {
 
   const setStatus = (kind, msg) => { statusEl.className = 'status ' + kind; statusEl.textContent = msg; };
 
+  // build the editable input table
+  buildInputTable(cfg);
+  $('#addrow').addEventListener('click', () => addRow(cfg, {}));
+
   // load the WebAssembly engine
   try {
     const mod = await import(cfg.engine);
@@ -37,28 +41,28 @@ export async function initTool(cfg) {
     console.error(e);
   }
 
-  // CSV file loader
+  // CSV file loader -> fills the table
   $('#pick').addEventListener('click', () => $('#file').click());
   $('#file').addEventListener('change', async ev => {
     const f = ev.target.files[0];
-    if (f) $('#csv').value = await f.text();
+    if (f) csvToTable(cfg, await f.text());
   });
 
   // run
   runBtn.addEventListener('click', () => {
     if (!engine) return;
-    const csv = $('#csv').value;
+    const csv = tableToCSV(cfg);
     const layersEl = $('#layers');
     const n = layersEl ? Math.max(1, parseInt(layersEl.value || '8', 10)) : 8;
     let data;
     try {
       data = JSON.parse(engine.analyzeCSV(csv, n));
     } catch (e) {
-      setStatus('err', 'An error occurred during analysis. Please check the input format.');
+      setStatus('err', 'An error occurred during analysis. Please check the input values.');
       console.error(e); return;
     }
     if (!data.layers.length) {
-      setStatus('warn', 'No valid data rows. Please check the input format.'); return;
+      setStatus('warn', 'No valid data rows. Please check the input values.'); return;
     }
     setStatus('ok', `Done — ${data.layers.length} layers.`);
     renderTable(data.layers, cfg);
@@ -67,6 +71,99 @@ export async function initTool(cfg) {
     $('#results').classList.add('show');
   });
 }
+
+/* ---------------- editable input table ---------------- */
+
+function buildInputTable(cfg) {
+  const table = $('#inputTable');
+  table.innerHTML =
+    `<thead><tr>${cfg.columns.map(c => `<th>${c.label}</th>`).join('')}<th></th></tr></thead><tbody></tbody>`;
+  const rows = (cfg.rows && cfg.rows.length) ? cfg.rows : [{}];
+  rows.forEach(r => addRow(cfg, r));
+}
+
+function addRow(cfg, values = {}) {
+  const tbody = $('#inputTable tbody');
+  const tr = document.createElement('tr');
+
+  cfg.columns.forEach(c => {
+    const td = document.createElement('td');
+    if (c.type === 'select') {
+      const sel = document.createElement('select');
+      sel.dataset.key = c.key;
+      c.options.forEach(o => {
+        const op = document.createElement('option');
+        op.value = o.v; op.textContent = o.t;
+        sel.appendChild(op);
+      });
+      if (values[c.key] != null && values[c.key] !== '') sel.value = String(values[c.key]);
+      td.appendChild(sel);
+    } else {
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.inputMode = 'decimal';
+      inp.dataset.key = c.key;
+      if (values[c.key] != null) inp.value = values[c.key];
+      inp.addEventListener('paste', e => handlePaste(e, cfg, tr));
+      td.appendChild(inp);
+    }
+    tr.appendChild(td);
+  });
+
+  const rmtd = document.createElement('td');
+  rmtd.className = 'rm';
+  const rm = document.createElement('button');
+  rm.type = 'button'; rm.className = 'rmbtn'; rm.textContent = '×'; rm.title = 'Remove row';
+  rm.addEventListener('click', () => {
+    if ($('#inputTable tbody').children.length > 1) tr.remove();
+  });
+  rmtd.appendChild(rm);
+  tr.appendChild(rmtd);
+
+  tbody.appendChild(tr);
+  return tr;
+}
+
+// Paste tab- or comma-separated data from a spreadsheet, filling the grid from this row down.
+function handlePaste(e, cfg, startTr) {
+  const text = (e.clipboardData || window.clipboardData).getData('text');
+  if (!text || !/[\t\n,]/.test(text)) return; // single value -> normal paste
+  e.preventDefault();
+  const grid = text.replace(/\r/g, '').split('\n').filter(l => l.trim() !== '').map(l => l.split(/\t|,/));
+  const tbody = $('#inputTable tbody');
+  const startIndex = [...tbody.children].indexOf(startTr);
+  grid.forEach((cells, i) => {
+    let tr = tbody.children[startIndex + i];
+    if (!tr) tr = addRow(cfg, {});
+    const fields = tr.querySelectorAll('input, select');
+    cells.forEach((val, j) => { if (fields[j]) fields[j].value = val.trim(); });
+  });
+}
+
+function tableToCSV(cfg) {
+  const header = cfg.columns.map(c => c.key).join(',');
+  const rows = [...$('#inputTable tbody').children].map(tr => {
+    const fields = tr.querySelectorAll('input, select');
+    return [...fields].map(el => el.value.trim()).join(',');
+  }).filter(line => line.split(',').some(v => v !== ''));
+  return header + '\n' + rows.join('\n');
+}
+
+function csvToTable(cfg, text) {
+  const lines = text.replace(/\r/g, '').split('\n').map(l => l.trim()).filter(l => l !== '');
+  const tbody = $('#inputTable tbody');
+  tbody.innerHTML = '';
+  lines.forEach(line => {
+    const cells = line.split(',');
+    if (isNaN(parseFloat(cells[0]))) return; // skip header / invalid rows
+    const values = {};
+    cfg.columns.forEach((c, idx) => { values[c.key] = (cells[idx] || '').trim(); });
+    addRow(cfg, values);
+  });
+  if (!tbody.children.length) addRow(cfg, {});
+}
+
+/* ---------------- output rendering ---------------- */
 
 function renderLegend(cfg, profile) {
   const el = $('#legend');

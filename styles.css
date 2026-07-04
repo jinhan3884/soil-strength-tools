@@ -110,3 +110,23 @@ svg{display:block;max-width:100%;height:auto}
 .faq details[open] summary::before{content:'\2013'}
 .faq p{margin:10px 0 2px;color:#4a4f57}
 footer{max-width:760px;margin:24px auto 40px;padding:20px 2px 0;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+
+/* editable input table */
+.tablewrap{border:1px solid var(--line);border-radius:8px;overflow-x:auto;background:#fff}
+table.input-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13px}
+table.input-table th{background:#F3F5F6;color:var(--muted);font-weight:600;font-size:11px;
+  text-transform:uppercase;letter-spacing:.03em;padding:7px 8px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+table.input-table td{padding:0;border-bottom:1px solid var(--grid)}
+table.input-table tbody tr:last-child td{border-bottom:none}
+table.input-table input,table.input-table select{
+  width:100%;min-width:70px;border:none;background:transparent;font-family:var(--mono);font-size:13px;
+  padding:7px 8px;color:var(--ink)}
+table.input-table select{cursor:pointer}
+table.input-table input:focus,table.input-table select:focus{outline:2px solid var(--action);outline-offset:-2px;border-radius:4px}
+table.input-table td.rm{width:34px;text-align:center}
+.rmbtn{border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;padding:6px 8px}
+.rmbtn:hover{color:#9B2C2C}
+.table-controls{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.addbtn{background:#fff;color:var(--action-ink);border:1px solid var(--line);font-weight:500;
+  border-radius:8px;padding:8px 14px;cursor:pointer;font-size:13px;font-family:var(--sans)}
+.addbtn:hover{background:#F3F5F6}
