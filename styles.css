@@ -115,8 +115,8 @@ footer{max-width:760px;margin:24px auto 40px;padding:20px 2px 0;border-top:1px s
 .tablewrap{border:1px solid var(--line);border-radius:8px;overflow-x:auto;background:#fff;width:fit-content;max-width:100%}
 table.input-table{width:auto;border-collapse:collapse;table-layout:fixed;font-family:var(--mono);font-size:13px}
 table.input-table th{background:#F3F5F6;color:var(--muted);font-weight:600;font-size:11px;
-  text-transform:uppercase;letter-spacing:.03em;padding:7px 6px;text-align:left;border-bottom:1px solid var(--line);border-right:1px solid var(--grid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-table.input-table td{padding:0;border-bottom:1px solid var(--grid);border-right:1px solid var(--grid)}
+  text-transform:uppercase;letter-spacing:.03em;padding:7px 6px !important;text-align:left !important;border-bottom:1px solid var(--line);border-right:1px solid var(--grid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+table.input-table td{padding:0 !important;border-bottom:1px solid var(--grid);border-right:1px solid var(--grid);white-space:normal !important}
 table.input-table th:last-child,table.input-table td:last-child{border-right:none}
 table.input-table tbody tr:last-child td{border-bottom:none}
 table.input-table input,table.input-table select{

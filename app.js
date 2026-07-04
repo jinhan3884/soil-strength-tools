@@ -76,9 +76,14 @@ export async function initTool(cfg) {
 
 function buildInputTable(cfg) {
   const table = $('#inputTable');
-  const cols = cfg.columns.map(c => `<col style="width:${c.width || 70}px">`).join('') + '<col style="width:34px">';
+  const widths = cfg.columns.map(c => c.width || 70);
+  const cols = widths.map(w => `<col style="width:${w}px">`).join('') + '<col style="width:34px">';
   const head = `<tr>${cfg.columns.map(c => `<th>${c.label}</th>`).join('')}<th></th></tr>`;
   table.innerHTML = `<colgroup>${cols}</colgroup><thead>${head}</thead><tbody></tbody>`;
+  // pin the table to the exact sum of column widths so columns never stretch
+  const total = widths.reduce((s, w) => s + w, 0) + 34;
+  table.style.width = total + 'px';
+  table.style.tableLayout = 'fixed';
   const rows = (cfg.rows && cfg.rows.length) ? cfg.rows : [{}];
   rows.forEach(r => addRow(cfg, r));
 }
