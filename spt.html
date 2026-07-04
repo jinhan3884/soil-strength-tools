@@ -140,9 +140,9 @@
     engine: './spt_core.js',
     soilColumn: true, sbtColumn: false,
     columns: [
-      { key: 'depth', label: 'Depth (m)', type: 'number' },
-      { key: 'spt',   label: 'N',         type: 'number' },
-      { key: 'type',  label: 'Soil',      type: 'select', options: [{ v: '1', t: 'Clay' }, { v: '0', t: 'Sand' }] },
+      { key: 'depth', label: 'Depth (m)', type: 'number', width: 78 },
+      { key: 'spt',   label: 'N',         type: 'number', width: 58 },
+      { key: 'type',  label: 'Soil',      type: 'select', width: 86, options: [{ v: '1', t: 'Clay' }, { v: '0', t: 'Sand' }] },
     ],
     rows: [
       { depth: '1.0', spt: '4',  type: '1' },

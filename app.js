@@ -76,8 +76,9 @@ export async function initTool(cfg) {
 
 function buildInputTable(cfg) {
   const table = $('#inputTable');
-  table.innerHTML =
-    `<thead><tr>${cfg.columns.map(c => `<th>${c.label}</th>`).join('')}<th></th></tr></thead><tbody></tbody>`;
+  const cols = cfg.columns.map(c => `<col style="width:${c.width || 70}px">`).join('') + '<col style="width:34px">';
+  const head = `<tr>${cfg.columns.map(c => `<th>${c.label}</th>`).join('')}<th></th></tr>`;
+  table.innerHTML = `<colgroup>${cols}</colgroup><thead>${head}</thead><tbody></tbody>`;
   const rows = (cfg.rows && cfg.rows.length) ? cfg.rows : [{}];
   rows.forEach(r => addRow(cfg, r));
 }
