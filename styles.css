@@ -113,7 +113,7 @@ svg{display:block;max-width:100%;height:auto}
 footer{max-width:760px;margin:24px auto 40px;padding:20px 2px 0;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
 
 /* editable input table */
-.tablewrap{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;width:fit-content;max-width:100%}
+.tablewrap{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;width:fit-content;max-width:100%;margin:0 auto}
 .input-grid{font-family:var(--mono);font-size:13px;width:fit-content;min-width:0}
 .grid-row{display:grid;grid-template-columns:var(--cols);border-bottom:1px solid var(--grid)}
 .grid-row:last-child{border-bottom:none}
