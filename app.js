@@ -75,81 +75,88 @@ export async function initTool(cfg) {
 /* ---------------- editable input table ---------------- */
 
 function buildInputTable(cfg) {
-  const table = $('#inputTable');
-  const widths = cfg.columns.map(c => c.width || 70);
-  const cols = widths.map(w => `<col style="width:${w}px">`).join('') + '<col style="width:34px">';
-  const head = `<tr>${cfg.columns.map(c => `<th>${c.label}</th>`).join('')}<th></th></tr>`;
-  table.innerHTML = `<colgroup>${cols}</colgroup><thead>${head}</thead><tbody></tbody>`;
-  // pin the table to the exact sum of column widths so columns never stretch
-  const total = widths.reduce((s, w) => s + w, 0) + 34;
-  table.style.width = total + 'px';
-  table.style.tableLayout = 'fixed';
+  const grid = $('#inputTable');
+  const widths = cfg.columns.map(c => (c.width || 70) + 'px');
+  grid.style.setProperty('--cols', widths.join(' ') + ' 34px');
+  grid.innerHTML = '';
+
+  const head = document.createElement('div');
+  head.className = 'grid-row grid-head';
+  cfg.columns.forEach(c => {
+    const h = document.createElement('div'); h.className = 'hcell'; h.textContent = c.label; head.appendChild(h);
+  });
+  head.appendChild(Object.assign(document.createElement('div'), { className: 'hcell' }));
+  grid.appendChild(head);
+
+  const body = document.createElement('div');
+  body.id = 'gridBody';
+  grid.appendChild(body);
+
   const rows = (cfg.rows && cfg.rows.length) ? cfg.rows : [{}];
   rows.forEach(r => addRow(cfg, r));
 }
 
 function addRow(cfg, values = {}) {
-  const tbody = $('#inputTable tbody');
-  const tr = document.createElement('tr');
+  const body = $('#gridBody');
+  const row = document.createElement('div');
+  row.className = 'grid-row';
 
   cfg.columns.forEach(c => {
-    const td = document.createElement('td');
+    const cell = document.createElement('div');
+    cell.className = 'gcell';
+    let field;
     if (c.type === 'select') {
-      const sel = document.createElement('select');
-      sel.dataset.key = c.key;
+      field = document.createElement('select');
       c.options.forEach(o => {
         const op = document.createElement('option');
         op.value = o.v; op.textContent = o.t;
-        sel.appendChild(op);
+        field.appendChild(op);
       });
-      if (values[c.key] != null && values[c.key] !== '') sel.value = String(values[c.key]);
-      td.appendChild(sel);
+      if (values[c.key] != null && values[c.key] !== '') field.value = String(values[c.key]);
     } else {
-      const inp = document.createElement('input');
-      inp.type = 'text';
-      inp.inputMode = 'decimal';
-      inp.dataset.key = c.key;
-      if (values[c.key] != null) inp.value = values[c.key];
-      inp.addEventListener('paste', e => handlePaste(e, cfg, tr));
-      td.appendChild(inp);
+      field = document.createElement('input');
+      field.type = 'text';
+      field.inputMode = 'decimal';
+      if (values[c.key] != null) field.value = values[c.key];
+      field.addEventListener('paste', e => handlePaste(e, cfg, row));
     }
-    tr.appendChild(td);
+    field.dataset.key = c.key;
+    cell.appendChild(field);
+    row.appendChild(cell);
   });
 
-  const rmtd = document.createElement('td');
-  rmtd.className = 'rm';
+  const rmcell = document.createElement('div');
+  rmcell.className = 'gcell rm';
   const rm = document.createElement('button');
   rm.type = 'button'; rm.className = 'rmbtn'; rm.textContent = '×'; rm.title = 'Remove row';
-  rm.addEventListener('click', () => {
-    if ($('#inputTable tbody').children.length > 1) tr.remove();
-  });
-  rmtd.appendChild(rm);
-  tr.appendChild(rmtd);
+  rm.addEventListener('click', () => { if ($('#gridBody').children.length > 1) row.remove(); });
+  rmcell.appendChild(rm);
+  row.appendChild(rmcell);
 
-  tbody.appendChild(tr);
-  return tr;
+  body.appendChild(row);
+  return row;
 }
 
 // Paste tab- or comma-separated data from a spreadsheet, filling the grid from this row down.
-function handlePaste(e, cfg, startTr) {
+function handlePaste(e, cfg, startRow) {
   const text = (e.clipboardData || window.clipboardData).getData('text');
   if (!text || !/[\t\n,]/.test(text)) return; // single value -> normal paste
   e.preventDefault();
   const grid = text.replace(/\r/g, '').split('\n').filter(l => l.trim() !== '').map(l => l.split(/\t|,/));
-  const tbody = $('#inputTable tbody');
-  const startIndex = [...tbody.children].indexOf(startTr);
+  const body = $('#gridBody');
+  const startIndex = [...body.children].indexOf(startRow);
   grid.forEach((cells, i) => {
-    let tr = tbody.children[startIndex + i];
-    if (!tr) tr = addRow(cfg, {});
-    const fields = tr.querySelectorAll('input, select');
+    let row = body.children[startIndex + i];
+    if (!row) row = addRow(cfg, {});
+    const fields = row.querySelectorAll('input, select');
     cells.forEach((val, j) => { if (fields[j]) fields[j].value = val.trim(); });
   });
 }
 
 function tableToCSV(cfg) {
   const header = cfg.columns.map(c => c.key).join(',');
-  const rows = [...$('#inputTable tbody').children].map(tr => {
-    const fields = tr.querySelectorAll('input, select');
+  const rows = [...$('#gridBody').children].map(row => {
+    const fields = row.querySelectorAll('input, select');
     return [...fields].map(el => el.value.trim()).join(',');
   }).filter(line => line.split(',').some(v => v !== ''));
   return header + '\n' + rows.join('\n');
@@ -157,8 +164,8 @@ function tableToCSV(cfg) {
 
 function csvToTable(cfg, text) {
   const lines = text.replace(/\r/g, '').split('\n').map(l => l.trim()).filter(l => l !== '');
-  const tbody = $('#inputTable tbody');
-  tbody.innerHTML = '';
+  const body = $('#gridBody');
+  body.innerHTML = '';
   lines.forEach(line => {
     const cells = line.split(',');
     if (isNaN(parseFloat(cells[0]))) return; // skip header / invalid rows
@@ -166,7 +173,7 @@ function csvToTable(cfg, text) {
     cfg.columns.forEach((c, idx) => { values[c.key] = (cells[idx] || '').trim(); });
     addRow(cfg, values);
   });
-  if (!tbody.children.length) addRow(cfg, {});
+  if (!body.children.length) addRow(cfg, {});
 }
 
 /* ---------------- output rendering ---------------- */

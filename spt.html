@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./styles.css?v=4">
+<link rel="stylesheet" href="./styles.css?v=5">
 </head>
 <body>
 <nav class="nav">
@@ -46,7 +46,7 @@
   <div class="grid">
     <section class="card">
       <label class="field">Borehole profile</label>
-      <div class="tablewrap"><table class="input-table" id="inputTable"></table></div>
+      <div class="tablewrap"><div class="input-grid" id="inputTable"></div></div>
       <div class="table-controls">
         <button class="addbtn" id="addrow" type="button">+ Add row</button>
         <button class="filebtn" id="pick" type="button">Load CSV</button>
@@ -135,7 +135,7 @@
 </footer>
 
 <script type="module">
-  import { initTool } from './app.js?v=4';
+  import { initTool } from './app.js?v=5';
   initTool({
     engine: './spt_core.js',
     soilColumn: true, sbtColumn: false,
