@@ -118,11 +118,11 @@ footer{max-width:760px;margin:24px auto 40px;padding:20px 2px 0;border-top:1px s
 .grid-row{display:grid;grid-template-columns:var(--cols);border-bottom:1px solid var(--grid)}
 .grid-row:last-child{border-bottom:none}
 .grid-head{background:#F3F5F6;border-bottom:1px solid var(--line)}
-.hcell{padding:7px 6px;color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.03em;border-right:1px solid var(--grid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hcell{padding:7px 6px;color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.03em;border-right:1px solid var(--grid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
 .gcell{border-right:1px solid var(--grid);min-width:0;overflow:hidden}
 .hcell:last-child,.gcell:last-child{border-right:none}
 .gcell.rm{display:flex;align-items:center;justify-content:center}
-.input-grid input,.input-grid select{width:100%;min-width:0;border:none;background:transparent;font-family:var(--mono);font-size:13px;padding:7px 6px;color:var(--ink);box-sizing:border-box}
+.input-grid input,.input-grid select{width:100%;min-width:0;border:none;background:transparent;font-family:var(--mono);font-size:13px;padding:7px 6px;color:var(--ink);box-sizing:border-box;text-align:center}
 .input-grid select{cursor:pointer}
 .input-grid input:focus,.input-grid select:focus{outline:2px solid var(--action);outline-offset:-2px;border-radius:4px}
 .rmbtn{border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;padding:6px 8px}

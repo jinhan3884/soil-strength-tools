@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./styles.css?v=6">
+<link rel="stylesheet" href="./styles.css?v=8">
 </head>
 <body>
 <nav class="nav">
@@ -138,13 +138,13 @@
 </footer>
 
 <script type="module">
-  import { initTool } from './app.js?v=6';
+  import { initTool } from './app.js?v=8';
   initTool({
     engine: './cpt_core.js',
     soilColumn: false, sbtColumn: true,
     columns: [
-      { key: 'depth', label: 'Depth (m)', type: 'number', width: 84 },
-      { key: 'qc',    label: 'qc (MPa)',  type: 'number', width: 86 },
+      { key: 'depth', label: 'Depth (m)', type: 'number', width: 78 },
+      { key: 'qc',    label: 'qc (MPa)',  type: 'number', width: 80 },
       { key: 'fs',    label: 'fs',        type: 'number', width: 74 },
       { key: 'u2',    label: 'u2',        type: 'number', width: 74 },
     ],
