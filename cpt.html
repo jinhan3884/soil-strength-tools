@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./styles.css?v=8">
+<link rel="stylesheet" href="./styles.css?v=9">
 </head>
 <body>
 <nav class="nav">
@@ -52,8 +52,12 @@
         <button class="filebtn" id="pick" type="button">Load CSV</button>
         <input id="file" type="file" accept=".csv,text/csv" hidden>
       </div>
-      <p class="hint">qc in MPa. fs·u2 units (MPa/kPa) are auto-detected. Fixed 8 layers (0.1H×6 + 0.2H×2). Tip: copy a block from a spreadsheet and paste into a cell to fill many rows at once.</p>
+      <p class="hint">qc in MPa. fs·u2 units (MPa/kPa) are auto-detected. Set the number of design layers below. Tip: copy a block from a spreadsheet and paste into a cell to fill many rows at once.</p>
       <div class="row">
+        <div class="num">
+          <label class="field" for="layers" style="margin:0">Layers</label>
+          <input id="layers" type="number" min="1" max="30" value="8">
+        </div>
         <button class="go" id="run" disabled>Analyze</button>
       </div>
       <div id="status" class="status warn">Loading engine…</div>
@@ -99,7 +103,7 @@
 
     <section>
       <h2>How to use the calculator</h2>
-      <p>Enter one row per measurement as comma-separated values; a header row is skipped automatically. Columns are depth (m), qc (MPa), fs and u2 — the units of fs and u2 (MPa or kPa) are detected automatically. Click Analyze to see the layer summary and depth profile. The layering follows a fixed eight-layer scheme, and you can load a CSV exported from a spreadsheet.</p>
+      <p>Enter one row per measurement as comma-separated values; a header row is skipped automatically. Columns are depth (m), qc (MPa), fs and u2 — the units of fs and u2 (MPa or kPa) are detected automatically. Dense CPT logs (thousands of rows) are resampled to a 0.1 m interval, strength parameters are computed at each 0.1 m step for the depth profile, and those results are grouped into the number of design layers you set for the layer summary. Click Analyze to see the results, and you can load a CSV exported from a spreadsheet.</p>
     </section>
 
     <section>
@@ -138,7 +142,7 @@
 </footer>
 
 <script type="module">
-  import { initTool } from './app.js?v=8';
+  import { initTool } from './app.js?v=9';
   initTool({
     engine: './cpt_core.js',
     soilColumn: false, sbtColumn: true,
