@@ -8,9 +8,9 @@ const isClay = p => p.c > 0 && p.f === 0;
 // Robertson (2010) non-normalized SBT zones — clay(brown) -> sand(yellow) ramp
 const SBT = {
   0: { label: 'Unclassified',          color: '#9AA3AB' },
-  2: { label: 'Organic soils',         color: '#4E3B2A' },
-  3: { label: 'Clay',                  color: '#8A5A3B' },
-  4: { label: 'Silt mixture',          color: '#B08E5A' },
+  2: { label: 'Organic soils',         color: '#0F4A50' },
+  3: { label: 'Clay',                  color: '#1F6F78' },
+  4: { label: 'Silt mixture',          color: '#5FA0A6' },
   5: { label: 'Sand mixture',          color: '#C9A14A' },
   6: { label: 'Sand',                  color: '#DCC079' },
   7: { label: 'Gravelly / dense sand', color: '#E3D3A0' },

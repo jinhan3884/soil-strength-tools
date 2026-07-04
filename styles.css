@@ -79,7 +79,7 @@ button.go:disabled{background:#9AA3AB;cursor:not-allowed}
 .scroll{overflow-x:auto}
 table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:13px;min-width:520px}
 th,td{text-align:right;padding:7px 12px;border-bottom:1px solid var(--grid);white-space:nowrap}
-th{color:var(--muted);font-weight:600;font-size:11px;letter-spacing:.04em;text-transform:uppercase;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600;font-size:11px;letter-spacing:.04em;border-bottom:1px solid var(--line)}
 th.l,td.l{text-align:left}
 td.soil-clay{color:var(--clay);font-weight:600}
 td.soil-sand{color:var(--sand);font-weight:600}
