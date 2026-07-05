@@ -118,7 +118,7 @@ footer{max-width:760px;margin:24px auto 40px;padding:20px 2px 0;border-top:1px s
 .grid-row{display:grid;grid-template-columns:var(--cols);border-bottom:1px solid var(--grid)}
 .grid-row:last-child{border-bottom:none}
 .grid-head{background:#F3F5F6;border-bottom:1px solid var(--line)}
-.hcell{padding:7px 6px;color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.03em;border-right:1px solid var(--grid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
+.hcell{padding:7px 6px;color:var(--muted);font-weight:600;font-size:11px;letter-spacing:.03em;border-right:1px solid var(--grid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
 .gcell{border-right:1px solid var(--grid);min-width:0;overflow:hidden}
 .hcell:last-child,.gcell:last-child{border-right:none}
 .gcell.rm{display:flex;align-items:center;justify-content:center}
