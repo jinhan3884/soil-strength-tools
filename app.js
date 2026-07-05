@@ -3,7 +3,7 @@
 
 const $ = s => document.querySelector(s);
 const fmt = (v, d = 1) => v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
-const isClay = p => p.c > 0 && p.f === 0;
+const isClay = p => p.type === 1;
 
 // Robertson (2010) non-normalized SBT zones — clay(brown) -> sand(yellow) ramp
 const SBT = {
